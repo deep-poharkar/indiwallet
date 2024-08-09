@@ -8,14 +8,17 @@ datasource db {
 }
 
 model User {
-  id          String     @id @default(uuid())
-  username    String
-  password    String?
-  solWalletId String?
-  solWallet   SolWallet?
-  inrWallet   InrWallet?
-  inrWalletId String?
-  provider    Provider
+  id             String     @id @default(uuid())
+  username       String
+  name           String?
+  profilePicture String?
+  password       String?
+  solWalletId    String?
+  solWallet      SolWallet?
+  inrWallet      InrWallet?
+  inrWalletId    String?
+  provider       Provider
+  sub            String     @unique
 }
 
 model InrWallet {
