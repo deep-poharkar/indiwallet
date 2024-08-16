@@ -1,14 +1,15 @@
 import GoogleProvider from "next-auth/providers/google";
-import { db } from "@/app/db";
+import {db} from "@/app/db";
 import { Keypair } from "@solana/web3.js";
+
 import { Session } from 'next-auth';
 
-export interface SessionWithUID extends Session {
+export interface session extends Session {
     user: {
-        email: string;
-        name: string;
-        image: string;
-        uid: string;
+      email: string;
+      name: string;
+      image: string
+      uid: string;
     };
 }
 
@@ -21,76 +22,73 @@ export const authConfig = {
         })
     ],
     callbacks: {
-        session: ({ session, token }: any): SessionWithUID => {
-            const newSession: SessionWithUID = session as SessionWithUID;
+        session: ({ session, token }: any): session => {
+            const newSession: session = session as session;
             if (newSession.user && token.uid) {
-                newSession.user.uid = token.uid ?? "";
+              // @ts-ignore
+              newSession.user.uid = token.uid ?? "";
             }
-            return newSession;
+            return newSession!;
         },
         async jwt({ token, account, profile }: any) {
             const user = await db.user.findFirst({
                 where: {
                     sub: account?.providerAccountId ?? ""
                 }
-            });
+            })
             if (user) {
-                token.uid = user.id;
+              token.uid = user.id
             }
-            return token;
+            return token
         },
         async signIn({ user, account, profile, email, credentials }: any) {
-            if (account?.provider === "GOOGLE") {
+            if (account?.provider === "google") {
                 const email = user.email;
                 if (!email) {
-                    console.error("No email found for the user");
-                    return false;
+                    return false
                 }
 
-                const existingUser = await db.user.findFirst({
-                    where: { sub: account.providerAccountId }
-                });
+                const userDb = await db.user.findFirst({
+                    where: {
+                        username: email
+                    }
+                })
 
-                if (existingUser) {
+                if (userDb) {
                     return true;
                 }
 
-                const { publicKey, privateKey } = generateSolanaKeyPair();
+                const keypair = Keypair.generate();
+                const publicKey = keypair.publicKey.toBase58();
+                const privateKey = keypair.secretKey;
 
-                try {
-                    await db.user.create({
-                        data: {
-                            username: email,
-                            name: profile?.name,
-                            profilePicture: profile?.picture ?? "",
-                            provider: "GOOGLE",
-                            sub: account.providerAccountId,
-                            solWallet: {
-                                create: {
-                                    publicKey: publicKey,
-                                    privateKey: privateKey.toString()
-                                }
-                            },
-                            inrWallet: {
-                                create: {
-                                    balance: 0
-                                }
+                await db.user.create({
+                    data: {
+                        username: email,
+                        name: profile?.name,
+                        //@ts-ignore
+                        profilePicture: profile?.picture,
+                        provider: "GOOGLE",
+                        sub: account.providerAccountId,
+                        solWallet: {
+                            create: {
+                                publicKey: publicKey,
+                                privateKey: privateKey.toString()
+                            }
+                        },
+                        inrWallet: {
+                            create: {
+                                balance: 0
                             }
                         }
-                    });
-                    console.log("User created successfully");
-                    return true;
-                } catch (error) {
-                    console.error("Error creating user:", error);
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-}
+                    }
+                })
 
-function generateSolanaKeyPair() {
-    // Implement key pair generation logic here
-    return { publicKey: "generatedPublicKey", privateKey: "generatedPrivateKey" };
+                return true;
+
+            }
+            
+            return false
+        },
+    }
 }
