@@ -6,7 +6,7 @@ import { PrimaryButton, TabButton } from "./Button";
 import { useEffect, useState } from "react";
 import { TokenWithbalance, useTokens } from "../api/hooks/useTokens";
 import { TokenList } from "./TokenList";
-// import { Swap } from "./Swap";
+import { Swap } from "./Swap";
 
 type Tab = "tokens" | "send" | "add_funds" | "swap" | "withdraw"
 const tabs: {id: Tab; name: string}[] = [
@@ -50,16 +50,15 @@ export const ProfileCard = ({publicKey}: {
             </div>
             
             <div className={`${selectedTab === "tokens" ? "visible" : "hidden"}`}><Assets tokenBalances={tokenBalances} loading={loading} publicKey={publicKey} /> </div>
-            {/* <div className={`${selectedTab === "swap" ? "visible" : "hidden"}`}><Swap tokenBalances={tokenBalances} publicKey={publicKey} /> </div> */}
+            <div className={`${selectedTab === "swap" ? "visible" : "hidden"}`}><Swap tokenBalances={tokenBalances} publicKey={publicKey} /> </div>
             <div className={`${(selectedTab !== "swap" && selectedTab !== "tokens") ? "visible" : "hidden"}`}><Warning /> </div>
         </div>
-        
     </div>
 }
 
 function Warning() {
     return <div className="bg-slate-50 py-32 px-10 flex justify-center">
-        We dont yet support this feature
+        we currently don't support this feature
     </div>
 }
 
