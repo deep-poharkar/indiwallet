@@ -68,7 +68,7 @@ export const authConfig = {
                         name: profile?.name,
                         //@ts-ignore
                         profilePicture: profile?.picture,
-                        provider: "Google",
+                        provider: "GOOGLE",
                         sub: account.providerAccountId,
                         solWallet: {
                             create: {
