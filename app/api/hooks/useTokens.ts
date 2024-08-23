@@ -15,19 +15,14 @@ export function useTokens(address: string) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(true);
         axios.get(`/api/tokens?address=${address}`)
             .then(res => {
                 setTokenBalances(res.data);
-                setLoading(false);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
-    }, [address]); 
+                setLoading(false)
+            }).catch(err => console.log(err))
+    }, [])
 
     return {
-        loading,
-        tokenBalances,
-    };
+        loading, tokenBalances
+    }
 }

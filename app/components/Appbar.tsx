@@ -1,19 +1,40 @@
-'use client';
+"use client";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
-import { useSession, signIn, signOut } from "next-auth/react";
-import { PrimaryButton } from "./Button";
-export const AppBar = () => {
-const session = useSession();
-    return <div className="border-b px-2 py-2 flex justify-between">
-        <div className="text-2xl font-bold flex flex-col justify-center">
-            IndiWallet
-        </div>
-        <div>
-            {session.data?.user? <PrimaryButton onClick={() => {
-                signOut()
-            }}>Logout</PrimaryButton> : <PrimaryButton onClick={() => {
-                signIn()
-            }}>Login</PrimaryButton>}
-        </div>
+export const Appbar = () => {
+  const session = useSession();
+  const router = useRouter();
+
+  return (
+    <div className="border-b px-2 py-2 flex justify-between">
+      <div
+        className="text-xl font-bold flex flex-col justify-center"
+        role="button"
+        onClick={() => router.push("/")}
+      >
+        IndiWallet
+      </div>
+      <div>
+        {session.data?.user ? (
+          <Button
+            onClick={() => {
+              signOut();
+            }}
+          >
+            Logout
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              signIn();
+            }}
+          >
+            Signin
+          </Button>
+        )}
+      </div>
     </div>
-}
+  );
+};

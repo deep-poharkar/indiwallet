@@ -1,7 +1,7 @@
 import { authConfig } from "@/app/lib/auth";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import {db} from "@/app/db";
+import db from "@/app/db";
 import { Connection, Keypair, VersionedTransaction } from "@solana/web3.js";
 
 export async function POST(req: NextRequest) {

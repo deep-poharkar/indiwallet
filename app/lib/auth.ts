@@ -1,5 +1,5 @@
 import GoogleProvider from "next-auth/providers/google";
-import {db} from "@/app/db";
+import db from "@/app/db";
 import { Keypair } from "@solana/web3.js";
 
 import { Session } from 'next-auth';
@@ -68,7 +68,7 @@ export const authConfig = {
                         name: profile?.name,
                         //@ts-ignore
                         profilePicture: profile?.picture,
-                        provider: "GOOGLE",
+                        provider: "Google",
                         sub: account.providerAccountId,
                         solWallet: {
                             create: {
